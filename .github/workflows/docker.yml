@@ -1,15 +1,13 @@
 name: Reproducible Build Check
 
 on:
-  schedule:
-    - cron: '0 5 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:

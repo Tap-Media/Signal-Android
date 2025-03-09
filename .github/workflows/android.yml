@@ -1,19 +1,14 @@
 name: Android CI
 
 on:
-  pull_request:
-  push:
-    branches:
-    - 'main'
-    - '7.**'
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
