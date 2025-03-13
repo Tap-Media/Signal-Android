@@ -189,7 +189,7 @@ android {
     buildConfigField("String", "SIGNAL_CDN_URL", "\"https://cdn1.tapofthink.com\"")
     buildConfigField("String", "SIGNAL_CDN2_URL", "\"https://cdn2.tapofthink.com\"")
     buildConfigField("String", "SIGNAL_CDN3_URL", "\"https://cdn3.signal.org\"")
-    buildConfigField("String", "SIGNAL_CDSI_URL", "\"hhttps://cdsv2-dev.tapofthink.com\"")
+    buildConfigField("String", "SIGNAL_CDSI_URL", "\"https://cdsv2-dev.tapofthink.com\"")
     buildConfigField("String", "SIGNAL_SERVICE_STATUS_URL", "\"uptime.signal.org\"")
     buildConfigField("String", "SIGNAL_SVR2_URL", "\"https://svr2-dev.tapofthink.com\"")
     buildConfigField("String", "SIGNAL_SFU_URL", "\"https://sfu.tapofthink.com\"")
@@ -384,13 +384,13 @@ android {
 
       applicationIdSuffix = ".staging"
 
-      buildConfigField("String", "SIGNAL_URL", "\"https://chat.staging.signal.org\"")
-      buildConfigField("String", "STORAGE_URL", "\"https://storage-staging.signal.org\"")
-      buildConfigField("String", "SIGNAL_CDN_URL", "\"https://cdn-staging.signal.org\"")
-      buildConfigField("String", "SIGNAL_CDN2_URL", "\"https://cdn2-staging.signal.org\"")
+      buildConfigField("String", "SIGNAL_URL", "\"https://signal-server-dev.tapofthink.com\"")
+      buildConfigField("String", "STORAGE_URL", "\"https://stg.tapofthink.com\"")
+      buildConfigField("String", "SIGNAL_CDN_URL", "\"https://cdn1.tapofthink.com\"")
+      buildConfigField("String", "SIGNAL_CDN2_URL", "\"https://cdn2.tapofthink.com\"")
       buildConfigField("String", "SIGNAL_CDN3_URL", "\"https://cdn3-staging.signal.org\"")
-      buildConfigField("String", "SIGNAL_CDSI_URL", "\"https://cdsi.staging.signal.org\"")
-      buildConfigField("String", "SIGNAL_SVR2_URL", "\"https://svr2.staging.signal.org\"")
+      buildConfigField("String", "SIGNAL_CDSI_URL", "\"https://cdsv2-dev.tapofthink.com\"")
+      buildConfigField("String", "SIGNAL_SVR2_URL", "\"https://svr2-dev.tapofthink.com\"")
       buildConfigField("String", "SVR2_MRENCLAVE", "\"38e01eff4fe357dc0b0e8ef7a44b4abc5489fbccba3a78780f3872c277f62bf3\"")
       buildConfigField("String", "UNIDENTIFIED_SENDER_TRUST_ROOT", "\"BbqY1DzohE4NUZoVF+L18oUPrK3kILllLEJh2UnPSsEx\"")
       buildConfigField("String", "ZKGROUP_SERVER_PUBLIC_PARAMS", "\"ABSY21VckQcbSXVNCGRYJcfWHiAMZmpTtTELcDmxgdFbtp/bWsSxZdMKzfCp8rvIs8ocCU3B37fT3r4Mi5qAemeGeR2X+/YmOGR5ofui7tD5mDQfstAI9i+4WpMtIe8KC3wU5w3Inq3uNWVmoGtpKndsNfwJrCg0Hd9zmObhypUnSkfYn2ooMOOnBpfdanRtrvetZUayDMSC5iSRcXKpdlukrpzzsCIvEwjwQlJYVPOQPj4V0F4UXXBdHSLK05uoPBCQG8G9rYIGedYsClJXnbrgGYG3eMTG5hnx4X4ntARBgELuMWWUEEfSK0mjXg+/2lPmWcTZWR9nkqgQQP0tbzuiPm74H2wMO4u1Wafe+UwyIlIT9L7KLS19Aw8r4sPrXZSSsOZ6s7M1+rTJN0bI5CKY2PX29y5Ok3jSWufIKcgKOnWoP67d5b2du2ZVJjpjfibNIHbT/cegy/sBLoFwtHogVYUewANUAXIaMPyCLRArsKhfJ5wBtTminG/PAvuBdJ70Z/bXVPf8TVsR292zQ65xwvWTejROW6AZX6aqucUjlENAErBme1YHmOSpU6tr6doJ66dPzVAWIanmO/5mgjNEDeK7DDqQdB1xd03HT2Qs2TxY3kCK8aAb/0iM0HQiXjxZ9HIgYhbtvGEnDKW5ILSUydqH/KBhW4Pb0jZWnqN/YgbWDKeJxnDbYcUob5ZY5Lt5ZCMKuaGUvCJRrCtuugSMaqjowCGRempsDdJEt+cMaalhZ6gczklJB/IbdwENW9KeVFPoFNFzhxWUIS5ML9riVYhAtE6JE5jX0xiHNVIIPthb458cfA8daR0nYfYAUKogQArm0iBezOO+mPk5vCNWI+wwkyFCqNDXz/qxl1gAntuCJtSfq9OC3NkdhQlgYQ==\"")
