@@ -1,7 +1,7 @@
 FROM ubuntu:jammy-20230624@sha256:b060fffe8e1561c9c3e6dea6db487b900100fc26830b9ea2ec966c151ab4c020
 
-COPY docker/ docker/
-COPY docker/apt.conf docker/sources.list /etc/apt/
+#COPY docker/ docker/
+COPY reproducible-builds/docker/apt.conf reproducible-builds/docker/sources.list /etc/apt/
 
 # Bit of a chicken-and-egg problem.
 # Ubuntu needs the ca-certificates package before it'll trust our mirror.

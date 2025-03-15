@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  android:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: reproducible-builds/Dockerfile
+    command: tail -f /dev/null
+    volumes:
+     - ./:/project
