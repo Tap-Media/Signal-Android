@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: signal-android-runner
 
     steps:
     - uses: actions/checkout@v4
