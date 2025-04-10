@@ -43,7 +43,7 @@ object RemoteConfig {
 
   // region Core behavior
 
-  private val FETCH_INTERVAL = 2.hours
+  private val FETCH_INTERVAL = 5.minutes
 
   @VisibleForTesting
   val REMOTE_VALUES: MutableMap<String, Any> = TreeMap()
@@ -1129,7 +1129,8 @@ object RemoteConfig {
   /** Whether or not libsignal-net's CDSI lookups use the new route-based internals or the old ones */
   val libsignalRouteBasedCDSILookup: Boolean by remoteBoolean(
     key = "android.libsignal.libsignalRouteBasedCDSILookup",
-    defaultValue = true,
+    // tapmedia -  Disable RemoteConfig for CDSI
+    defaultValue = false,
     hotSwappable = true
   )
 

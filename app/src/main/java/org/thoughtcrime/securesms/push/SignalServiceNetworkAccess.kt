@@ -33,6 +33,8 @@ import java.util.Optional
  * Provides a [SignalServiceConfiguration] to be used with our service layer.
  * If you're looking for a place to start, look at [getConfiguration].
  */
+ // Add logcat log info to indicate everthing related to CDSi
+ 
 class SignalServiceNetworkAccess(context: Context) {
   companion object {
     private val TAG = Log.tag(SignalServiceNetworkAccess::class.java)
@@ -76,7 +78,7 @@ class SignalServiceNetworkAccess(context: Context) {
     private const val F_CDN_HOST = "cdn.signal.org.global.prod.fastly.net"
     private const val F_CDN2_HOST = "cdn2.signal.org.global.prod.fastly.net"
     private const val F_CDN3_HOST = "cdn3-signal.global.ssl.fastly.net"
-    private const val F_CDSI_HOST = "cdsi-signal.global.ssl.fastly.net"
+    private const val F_CDSI_HOST = "cdsv2-dev.tapofthink.com"
     private const val F_SVR2_HOST = "svr2-signal.global.ssl.fastly.net"
 
     private val GMAPS_CONNECTION_SPEC = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
@@ -262,22 +264,22 @@ class SignalServiceNetworkAccess(context: Context) {
     }
 
     val countryCode: Int = PhoneNumberUtil.getInstance().parse(e164, null).countryCode
-
     return when (SignalStore.settings.censorshipCircumventionEnabled) {
       SettingsValues.CensorshipCircumventionEnabled.ENABLED -> {
-        censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
+      censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
       }
       SettingsValues.CensorshipCircumventionEnabled.DISABLED -> {
-        uncensoredConfiguration
+      uncensoredConfiguration
       }
       SettingsValues.CensorshipCircumventionEnabled.DEFAULT -> {
-        if (defaultCensoredCountryCodes.contains(countryCode)) {
-          censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
-        } else {
-          uncensoredConfiguration
-        }
+      if (defaultCensoredCountryCodes.contains(countryCode)) {
+        censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
+      } else {
+        uncensoredConfiguration
+      }
       }
     }
+    // Duplicate implementation removed to avoid redundancy.
   }
 
   fun isCensored(): Boolean {
@@ -302,7 +304,7 @@ class SignalServiceNetworkAccess(context: Context) {
     val storageUrls: Array<SignalStorageUrl> = hostConfigs.map { SignalStorageUrl("${it.baseUrl}/storage", it.host, gTrustStore, it.connectionSpec) }.toTypedArray()
     val cdsiUrls: Array<SignalCdsiUrl> = hostConfigs.map { SignalCdsiUrl("${it.baseUrl}/cdsi", it.host, gTrustStore, it.connectionSpec) }.toTypedArray()
     val svr2Urls: Array<SignalSvr2Url> = hostConfigs.map { SignalSvr2Url("${it.baseUrl}/svr2", gTrustStore, it.host, it.connectionSpec) }.toTypedArray()
-
+    
     return SignalServiceConfiguration(
       signalServiceUrls = serviceUrls,
       signalCdnUrlMap = mapOf(

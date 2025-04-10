@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="google_app_id" translatable="false">1:312334754206:android:a9297b152879f266</string>
-    <string name="gcm_defaultSenderId" translatable="false">312334754206</string>
-    <string name="default_web_client_id" translatable="false">312334754206-dg1p1mtekis8ivja3ica50vonmrlunh4.apps.googleusercontent.com</string>
-    <string name="firebase_database_url" translatable="false">https://api-project-312334754206.firebaseio.com</string>
-    <string name="google_api_key" translatable="false">AIzaSyDrfzNAPBPzX6key51hqo3p5LZXF5Y-yxU</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDrfzNAPBPzX6key51hqo3p5LZXF5Y-yxU</string>
-    <string name="project_id" translatable="false">api-project-312334754206</string>
+    <string name="google_app_id" translatable="false">1:831230868805:android:74680068252ccecc1c922c</string>
+    <string name="gcm_defaultSenderId" translatable="false">831230868805</string>
+    <string name="default_web_client_id" translatable="false">831230868805-ntaku89218g44ebmhs2odbnghc88pr1g.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://youth-28265.appspot.com</string>
+    <string name="google_api_key" translatable="false">AIzaSyC49vNWGYupddmFhnXZ-_d6I4U6Ir-pMY8</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC49vNWGYupddmFhnXZ-_d6I4U6Ir-pMY8</string>
+    <string name="project_id" translatable="false">youth-28265</string>
 </resources>

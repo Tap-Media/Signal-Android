@@ -91,13 +91,14 @@ final class CdsiSocket {
       AtomicReference<Stage> stage = new AtomicReference<>(Stage.WAITING_TO_INITIALIZE);
 
       String          url     = String.format("%s/v1/%s/discovery", cdsiUrl.getUrl(), mrEnclave);
+      Log.w(TAG, "TapMedia: CDSi host: " + url);
       Request.Builder request = new Request.Builder()
                                    .url(url)
                                    .addHeader("Authorization", basicAuth(username, password));
 
       if (cdsiUrl.getHostHeader().isPresent()) {
         request.addHeader("Host", cdsiUrl.getHostHeader().get());
-        Log.w(TAG, "Using alternate host: " + cdsiUrl.getHostHeader().get());
+        Log.w(TAG, "TapMedia: Using alternate host: " + cdsiUrl.getHostHeader().get());
       }
 
       WebSocket webSocket = okhttp.newWebSocket(request.build(), new WebSocketListener() {

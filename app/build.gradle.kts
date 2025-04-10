@@ -220,7 +220,7 @@ android {
     buildConfigField("String", "SIGNAL_CAPTCHA_URL", "\"https://signalcaptchas.org/registration/generate.html\"")
     buildConfigField("String", "RECAPTCHA_PROOF_URL", "\"https://signalcaptchas.org/challenge/generate.html\"")
     buildConfigField("org.signal.libsignal.net.Network.Environment", "LIBSIGNAL_NET_ENV", "org.signal.libsignal.net.Network.Environment.PRODUCTION")
-    buildConfigField("int", "LIBSIGNAL_LOG_LEVEL", "org.signal.libsignal.protocol.logging.SignalProtocolLogger.INFO")
+    buildConfigField("int", "LIBSIGNAL_LOG_LEVEL", "org.signal.libsignal.protocol.logging.SignalProtocolLogger.DEBUG")
 
     buildConfigField("String", "BUILD_DISTRIBUTION_TYPE", "\"unset\"")
     buildConfigField("String", "BUILD_ENVIRONMENT_TYPE", "\"unset\"")
@@ -381,11 +381,11 @@ android {
 
     create("staging") {
       dimension = "environment"
-
+      applicationId = "com.tap.media"
       applicationIdSuffix = ".staging"
 
       buildConfigField("String", "SIGNAL_URL", "\"https://signal-server-dev.tapofthink.com\"")
-      buildConfigField("String", "STORAGE_URL", "\"https://stg.tapofthink.com\"")
+      buildConfigField("String", "STORAGE_URL", "\"https://storage-service-dev.tapofthink.com\"")
       buildConfigField("String", "SIGNAL_CDN_URL", "\"https://cdn1.tapofthink.com\"")
       buildConfigField("String", "SIGNAL_CDN2_URL", "\"https://cdn2.tapofthink.com\"")
       buildConfigField("String", "SIGNAL_CDN3_URL", "\"https://cdn3-staging.signal.org\"")
@@ -393,12 +393,12 @@ android {
       buildConfigField("String", "SIGNAL_SVR2_URL", "\"https://svr2-dev.tapofthink.com\"")
       buildConfigField("String", "SVR2_MRENCLAVE", "\"38e01eff4fe357dc0b0e8ef7a44b4abc5489fbccba3a78780f3872c277f62bf3\"")
       buildConfigField("String", "UNIDENTIFIED_SENDER_TRUST_ROOT", "\"BbqY1DzohE4NUZoVF+L18oUPrK3kILllLEJh2UnPSsEx\"")
-      buildConfigField("String", "ZKGROUP_SERVER_PUBLIC_PARAMS", "\"ABSY21VckQcbSXVNCGRYJcfWHiAMZmpTtTELcDmxgdFbtp/bWsSxZdMKzfCp8rvIs8ocCU3B37fT3r4Mi5qAemeGeR2X+/YmOGR5ofui7tD5mDQfstAI9i+4WpMtIe8KC3wU5w3Inq3uNWVmoGtpKndsNfwJrCg0Hd9zmObhypUnSkfYn2ooMOOnBpfdanRtrvetZUayDMSC5iSRcXKpdlukrpzzsCIvEwjwQlJYVPOQPj4V0F4UXXBdHSLK05uoPBCQG8G9rYIGedYsClJXnbrgGYG3eMTG5hnx4X4ntARBgELuMWWUEEfSK0mjXg+/2lPmWcTZWR9nkqgQQP0tbzuiPm74H2wMO4u1Wafe+UwyIlIT9L7KLS19Aw8r4sPrXZSSsOZ6s7M1+rTJN0bI5CKY2PX29y5Ok3jSWufIKcgKOnWoP67d5b2du2ZVJjpjfibNIHbT/cegy/sBLoFwtHogVYUewANUAXIaMPyCLRArsKhfJ5wBtTminG/PAvuBdJ70Z/bXVPf8TVsR292zQ65xwvWTejROW6AZX6aqucUjlENAErBme1YHmOSpU6tr6doJ66dPzVAWIanmO/5mgjNEDeK7DDqQdB1xd03HT2Qs2TxY3kCK8aAb/0iM0HQiXjxZ9HIgYhbtvGEnDKW5ILSUydqH/KBhW4Pb0jZWnqN/YgbWDKeJxnDbYcUob5ZY5Lt5ZCMKuaGUvCJRrCtuugSMaqjowCGRempsDdJEt+cMaalhZ6gczklJB/IbdwENW9KeVFPoFNFzhxWUIS5ML9riVYhAtE6JE5jX0xiHNVIIPthb458cfA8daR0nYfYAUKogQArm0iBezOO+mPk5vCNWI+wwkyFCqNDXz/qxl1gAntuCJtSfq9OC3NkdhQlgYQ==\"")
+      buildConfigField("String", "ZKGROUP_SERVER_PUBLIC_PARAMS", "\"ABAnr3zs35ijDRYRv9oVbKeBBTqf8tq8ZduF32VkpJYMgImd+68d8P7kDk6lcmLcRr/APdO4MkBK9N2e1STqshLCnmh4rjHdc8U7q61f+B2INSpV39KMTNmXsLg8bXTtVHZNJvTKs7lPFfcPnWsev+cdmjdl9AghmVR0V8z5xnRqaqZ8O3XRyPWmFa8z5gkFW2rEDtO3AP2Ah73y/0fa32fuaSD/rEWscXWh2L/KbY/1z0JWy5Ru1LLL8psExN8+Fg41swo1xb64faW6K4Pit1RrO+IS5tAC+q2HWYpZkIYXTmD1zPKHh0RAasFXGVlTKEU/yWTz7oEzbV2CM0/jZz4WhAqT68kbBFeqN6qUphaIrAIMH7sapbkqp5tJFzKZa9Zy8bu21ZV+5abJde5txkVUOOXl3EU2GFed5HN4t+8NMnqJxXN7kI//zWKTeHrkSancOPu3s+dRg8XPw/66BQAqTQi2MqDn3hMbPefFafjEGzJalU+qwZ+8OjFZNmkqT1a/0Bch2VIUoD/lhaoy6UzQgzv3cOrT7KovtDPnQcEJnpAizRezI9JSVtpjIGeYLoFjdmhbp2l/NgajgQaMxTM290NrYO/L3G7Fm9E7J52o6dZeL4Jfq+Uh2wkpsRWVfCbx6kxsyBZR2515p/vmabZvFNEWMAZ+9l1HolWMte4/0Lvd6LPq0U9Y9yf3LRc8qVemrBAM0V+VK+4SlZAdR2IUya5N4/NfHkN+BWB0IZA6oDYVxS1dvSmeh/Keiq5XBLhAofW2tFCOw4o6Obfb4t+Fw/7f7WSjSbXVJVoe9aBn4gQsRkJuJcwXpM7xOKbV9BJ2NYM0WlwTp2kzq0zVxQICDHKWWvCljXttsiAaFovphDbXPK1kNqEc8UrwZTNEBA==\"")
       buildConfigField("String", "GENERIC_SERVER_PUBLIC_PARAMS", "\"AHILOIrFPXX9laLbalbA9+L1CXpSbM/bTJXZGZiuyK1JaI6dK5FHHWL6tWxmHKYAZTSYmElmJ5z2A5YcirjO/yfoemE03FItyaf8W1fE4p14hzb5qnrmfXUSiAIVrhaXVwIwSzH6RL/+EO8jFIjJ/YfExfJ8aBl48CKHgu1+A6kWynhttonvWWx6h7924mIzW0Czj2ROuh4LwQyZypex4GuOPW8sgIT21KNZaafgg+KbV7XM1x1tF3XA17B4uGUaDbDw2O+nR1+U5p6qHPzmJ7ggFjSN6Utu+35dS1sS0P9N\"")
       buildConfigField("String", "BACKUP_SERVER_PUBLIC_PARAMS", "\"AHYrGb9IfugAAJiPKp+mdXUx+OL9zBolPYHYQz6GI1gWjpEu5me3zVNSvmYY4zWboZHif+HG1sDHSuvwFd0QszSwuSF4X4kRP3fJREdTZ5MCR0n55zUppTwfHRW2S4sdQ0JGz7YDQIJCufYSKh0pGNEHL6hv79Agrdnr4momr3oXdnkpVBIp3HWAQ6IbXQVSG18X36GaicI1vdT0UFmTwU2KTneluC2eyL9c5ff8PcmiS+YcLzh0OKYQXB5ZfQ06d6DiINvDQLy75zcfUOniLAj0lGJiHxGczin/RXisKSR8\"")
       buildConfigField("String", "MOBILE_COIN_ENVIRONMENT", "\"testnet\"")
-      buildConfigField("String", "SIGNAL_CAPTCHA_URL", "\"https://signalcaptchas.org/staging/registration/generate.html\"")
-      buildConfigField("String", "RECAPTCHA_PROOF_URL", "\"https://signalcaptchas.org/staging/challenge/generate.html\"")
+      buildConfigField("String", "SIGNAL_CAPTCHA_URL", "\"https://hcaptcha.tapofthink.com/index.html\"")
+      buildConfigField("String", "RECAPTCHA_PROOF_URL", "\"https://hcaptcha.tapofthink.com/index.html\"")
       buildConfigField("org.signal.libsignal.net.Network.Environment", "LIBSIGNAL_NET_ENV", "org.signal.libsignal.net.Network.Environment.STAGING")
       buildConfigField("int", "LIBSIGNAL_LOG_LEVEL", "org.signal.libsignal.protocol.logging.SignalProtocolLogger.DEBUG")
 
