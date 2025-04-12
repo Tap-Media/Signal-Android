@@ -57,17 +57,26 @@ public final class CdsiV2Service {
   public CdsiV2Service(@Nonnull Network network, boolean useLibsignalRouteBasedCDSIConnectionLogic) {
     this.cdsiRequestHandler = (username, password, request, tokenSaver) -> {
       try {
-        Log.d(TAG, "[tapmedia] [handleRequest] Starting CDSI lookup request");
+        Log.i(TAG, String.format("[tapmedia] [handleRequest] Starting CDSI lookup request with username: %s", username));
+        Log.i(TAG, String.format("[tapmedia] [handleRequest] Previous E164s count: %d", request.previousE164s.size()));
+        Log.i(TAG, String.format("[tapmedia] [handleRequest] New E164s count: %d", request.newE164s.size()));
+        Log.i(TAG, String.format("[tapmedia] [handleRequest] Service IDs count: %d", request.serviceIds.size()));
+        Log.i(TAG, String.format("[tapmedia] [handleRequest] Using libsignal route based connection: %b", useLibsignalRouteBasedCDSIConnectionLogic));
+        
         Future<CdsiLookupResponse> cdsiRequest = network.cdsiLookup(username, password, buildLibsignalRequest(request), tokenSaver, useLibsignalRouteBasedCDSIConnectionLogic);
         return Single.fromFuture(cdsiRequest)
                      .onErrorResumeNext((Throwable err) -> {
                        Log.e(TAG, String.format("[tapmedia] [handleRequest] CDSI lookup failed: %s", err.getMessage()), err);
                        if (err instanceof ExecutionException && err.getCause() != null) {
                          err = err.getCause();
+                         Log.e(TAG, String.format("[tapmedia] [handleRequest] Root cause: %s", err.getMessage()), err);
                        }
                        return Single.error(mapLibsignalError(err));
                      })
-                     .map(CdsiV2Service::parseLibsignalResponse)
+                     .map(response -> {
+                       Log.i(TAG, String.format("[tapmedia] [handleRequest] CDSI lookup successful. Entries: %d", response.entries().size()));
+                       return parseLibsignalResponse(response);
+                     })
                      .toObservable();
       } catch (Exception exception) {
         Log.e(TAG, String.format("[tapmedia] [handleRequest] Unexpected error in CDSI lookup: %s", exception.getMessage()), exception);
