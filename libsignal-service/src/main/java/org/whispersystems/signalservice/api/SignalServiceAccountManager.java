@@ -226,11 +226,12 @@ public class SignalServiceAccountManager {
                                                            Consumer<byte[]> tokenSaver)
       throws IOException
   {
-    Log.d(TAG, "[getRegisteredUsersWithCdsi] Starting CDSI request");
+    Log.i(TAG, "[getRegisteredUsersWithCdsi] Starting CDSI request");
     CdsiAuthResponse auth = pushServiceSocket.getCdsiAuth();
-    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Got CDSI auth credentials: username=%s, password length=%d", 
-        auth.getUsername(), auth.getPassword() != null ? auth.getPassword().length() : 0));
-    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Auth token expiration: %s", auth.getExpiration()));
+    Log.i(TAG, String.format("[getRegisteredUsersWithCdsi] Got CDSI auth credentials: username=%s, password length=%d, token present=%b", 
+        auth.getUsername(), 
+        auth.getPassword() != null ? auth.getPassword().length() : 0,
+        token.isPresent()));
     
     CdsiV2Service service = new CdsiV2Service(libsignalNetwork, useLibsignalRouteBasedCDSIConnectionLogic);
     CdsiV2Service.Request request = new CdsiV2Service.Request(previousE164s, newE164s, serviceIds, token);
@@ -238,7 +239,7 @@ public class SignalServiceAccountManager {
 
     ServiceResponse<CdsiV2Service.Response> serviceResponse;
     try {
-      Log.d(TAG, "[getRegisteredUsersWithCdsi] Making CDSI request with timeout: " + (timeoutMs != null ? timeoutMs : "none"));
+      Log.i(TAG, "[getRegisteredUsersWithCdsi] Making CDSI request with timeout: " + (timeoutMs != null ? timeoutMs : "none"));
       if (timeoutMs == null) {
         serviceResponse = single.blockingGet();
       } else {
