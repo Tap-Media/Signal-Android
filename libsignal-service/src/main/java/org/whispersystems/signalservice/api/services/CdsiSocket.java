@@ -66,13 +66,23 @@ final class CdsiSocket {
     this.mrEnclave = mrEnclave;
 
     Pair<SSLSocketFactory, X509TrustManager> socketFactory = createTlsSocketFactory(cdsiUrl.getTrustStore());
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Creating socket factory with trust store: %s", cdsiUrl.getTrustStore()));
 
     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                                                    .sslSocketFactory(new Tls12SocketFactory(socketFactory.first()), socketFactory.second())
                                                    .connectionSpecs(Util.immutableList(ConnectionSpec.RESTRICTED_TLS))
                                                    .retryOnConnectionFailure(false)
                                                    .readTimeout(30, TimeUnit.SECONDS)
-                                                   .connectTimeout(30, TimeUnit.SECONDS);
+                                                   .connectTimeout(30, TimeUnit.SECONDS)
+                                                   .addInterceptor(chain -> {
+                                                     Request request = chain.request();
+                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Making request to %s", request.url()));
+                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Request headers: %s", request.headers()));
+                                                     Response response = chain.proceed(request);
+                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Response code: %d", response.code()));
+                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Response headers: %s", response.headers()));
+                                                     return response;
+                                                   });
 
     for (Interceptor interceptor : configuration.getNetworkInterceptors()) {
       builder.addInterceptor(interceptor);
@@ -80,6 +90,7 @@ final class CdsiSocket {
 
     if (configuration.getSignalProxy().isPresent()) {
       SignalProxy proxy = configuration.getSignalProxy().get();
+      Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Using proxy: %s:%d", proxy.getHost(), proxy.getPort()));
       builder.socketFactory(new TlsProxySocketFactory(proxy.getHost(), proxy.getPort(), configuration.getDns()));
     }
 
