@@ -73,7 +73,6 @@ final class CdsiSocket {
     
     Pair<SSLSocketFactory, X509TrustManager> socketFactory = createTlsSocketFactory(cdsiUrl.getTrustStore());
     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Created socket factory with trust store: %s", cdsiUrl.getTrustStore()));
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Trust store certificates: %s", Arrays.toString(cdsiUrl.getTrustStore().getCertificates())));
 
     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                                                    .sslSocketFactory(new Tls12SocketFactory(socketFactory.first()), socketFactory.second())
