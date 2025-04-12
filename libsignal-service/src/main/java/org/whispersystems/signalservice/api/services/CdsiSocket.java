@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -65,8 +66,14 @@ final class CdsiSocket {
     this.cdsiUrl   = chooseUrl(configuration.getSignalCdsiUrls());
     this.mrEnclave = mrEnclave;
 
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Creating socket with CDSI URL: %s", cdsiUrl.getUrl()));
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Using mrEnclave: %s", mrEnclave));
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave length: %d", mrEnclave.length()));
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave format: %s", mrEnclave.matches("[0-9a-fA-F]+") ? "hex" : "non-hex"));
+    
     Pair<SSLSocketFactory, X509TrustManager> socketFactory = createTlsSocketFactory(cdsiUrl.getTrustStore());
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Creating socket factory with trust store: %s", cdsiUrl.getTrustStore()));
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Created socket factory with trust store: %s", cdsiUrl.getTrustStore()));
+    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Trust store certificates: %s", Arrays.toString(cdsiUrl.getTrustStore().getCertificates())));
 
     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                                                    .sslSocketFactory(new Tls12SocketFactory(socketFactory.first()), socketFactory.second())
@@ -95,6 +102,7 @@ final class CdsiSocket {
     }
 
     this.okhttp = builder.build();
+    Log.d(TAG, "[tapmedia] [CdsiSocket] OkHttpClient built successfully");
   }
 
   Observable<ClientResponse> connect(String username, String password, ClientRequest clientRequest, Consumer<byte[]> tokenSaver) {
@@ -103,6 +111,7 @@ final class CdsiSocket {
 
       String          url     = String.format("%s/v1/%s/discovery", cdsiUrl.getUrl(), mrEnclave);
       Log.d(TAG, String.format("[tapmedia] [connect] Attempting WebSocket connection to %s", url));
+      Log.d(TAG, String.format("[tapmedia] [connect] Using mrEnclave in URL: %s", mrEnclave));
       
       String authHeader = basicAuth(username, password);
       Log.d(TAG, String.format("[tapmedia] [connect] Using auth header: %s", authHeader));
@@ -117,15 +126,13 @@ final class CdsiSocket {
 
       if (cdsiUrl.getHostHeader().isPresent()) {
         String hostHeader = cdsiUrl.getHostHeader().get();
-        request.addHeader("Host", hostHeader);
         Log.d(TAG, String.format("[tapmedia] [connect] Using host header: %s", hostHeader));
+        request.addHeader("Host", hostHeader);
       }
 
-      Request builtRequest = request.build();
-      Log.d(TAG, String.format("[tapmedia] [connect] WebSocket upgrade request: %s", builtRequest.toString()));
-      Log.d(TAG, String.format("[tapmedia] [connect] WebSocket request headers: %s", builtRequest.headers().toString()));
+      Log.d(TAG, String.format("[tapmedia] [connect] Full request headers: %s", request.build().headers()));
 
-      WebSocket webSocket = okhttp.newWebSocket(builtRequest, new WebSocketListener() {
+      WebSocket webSocket = okhttp.newWebSocket(request.build(), new WebSocketListener() {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
           Log.d(TAG, String.format("[tapmedia] [onOpen] WebSocket opened with response code: %d", response.code()));
@@ -259,12 +266,16 @@ final class CdsiSocket {
 
   private static Pair<SSLSocketFactory, X509TrustManager> createTlsSocketFactory(TrustStore trustStore) {
     try {
+      Log.d(TAG, String.format("[tapmedia] [createTlsSocketFactory] Creating TLS socket factory with trust store: %s", trustStore));
       SSLContext     context       = SSLContext.getInstance("TLS");
       TrustManager[] trustManagers = BlacklistingTrustManager.createFor(trustStore);
+      Log.d(TAG, String.format("[tapmedia] [createTlsSocketFactory] Created trust managers: %s", Arrays.toString(trustManagers)));
       context.init(null, trustManagers, null);
+      Log.d(TAG, "[tapmedia] [createTlsSocketFactory] SSLContext initialized successfully");
 
       return new Pair<>(context.getSocketFactory(), (X509TrustManager) trustManagers[0]);
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
+      Log.e(TAG, String.format("[tapmedia] [createTlsSocketFactory] Error creating TLS socket factory: %s", e.getMessage()), e);
       throw new AssertionError(e);
     }
   }
