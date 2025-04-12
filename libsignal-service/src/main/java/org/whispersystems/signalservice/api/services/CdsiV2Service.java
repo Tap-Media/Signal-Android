@@ -5,6 +5,7 @@ import org.signal.cdsi.proto.ClientResponse;
 import org.signal.libsignal.net.CdsiLookupRequest;
 import org.signal.libsignal.net.CdsiLookupResponse;
 import org.signal.libsignal.net.Network;
+import org.signal.libsignal.protocol.logging.Log;
 import org.signal.libsignal.protocol.util.ByteUtil;
 import org.signal.libsignal.zkgroup.profiles.ProfileKey;
 import org.whispersystems.signalservice.api.crypto.UnidentifiedAccess;
@@ -40,7 +41,6 @@ import javax.annotation.Nonnull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import okio.ByteString;
-import android.util.Log;
 
 /**
  * Handles network interactions with CDSI, the SGX-backed version of the CDSv2 API.

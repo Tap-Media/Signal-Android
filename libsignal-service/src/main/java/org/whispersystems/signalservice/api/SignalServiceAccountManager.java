@@ -10,6 +10,7 @@ import org.signal.core.util.Base64;
 import org.signal.libsignal.net.Network;
 import org.signal.libsignal.protocol.IdentityKeyPair;
 import org.signal.libsignal.protocol.InvalidKeyException;
+import org.signal.libsignal.protocol.logging.Log;
 import org.signal.libsignal.protocol.ecc.ECPublicKey;
 import org.signal.libsignal.usernames.BaseUsernameException;
 import org.signal.libsignal.usernames.Username;
@@ -79,7 +80,6 @@ import javax.annotation.Nonnull;
 
 import io.reactivex.rxjava3.core.Single;
 import okio.ByteString;
-import android.util.Log;
 
 /**
  * The main interface for creating, registering, and
