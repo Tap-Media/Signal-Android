@@ -257,27 +257,28 @@ class SignalServiceNetworkAccess(context: Context) {
   }
 
   fun getConfiguration(e164: String?): SignalServiceConfiguration {
-    if (e164 == null || SignalStore.proxy.isProxyEnabled) {
-      return uncensoredConfiguration
-    }
+    return uncensoredConfiguration
+    // if (e164 == null || SignalStore.proxy.isProxyEnabled) {
+    //   return uncensoredConfiguration
+    // }
 
-    val countryCode: Int = PhoneNumberUtil.getInstance().parse(e164, null).countryCode
+    // val countryCode: Int = PhoneNumberUtil.getInstance().parse(e164, null).countryCode
 
-    return when (SignalStore.settings.censorshipCircumventionEnabled) {
-      SettingsValues.CensorshipCircumventionEnabled.ENABLED -> {
-        censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
-      }
-      SettingsValues.CensorshipCircumventionEnabled.DISABLED -> {
-        uncensoredConfiguration
-      }
-      SettingsValues.CensorshipCircumventionEnabled.DEFAULT -> {
-        if (defaultCensoredCountryCodes.contains(countryCode)) {
-          censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
-        } else {
-          uncensoredConfiguration
-        }
-      }
-    }
+    // return when (SignalStore.settings.censorshipCircumventionEnabled) {
+    //   SettingsValues.CensorshipCircumventionEnabled.ENABLED -> {
+    //     censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
+    //   }
+    //   SettingsValues.CensorshipCircumventionEnabled.DISABLED -> {
+    //     uncensoredConfiguration
+    //   }
+    //   SettingsValues.CensorshipCircumventionEnabled.DEFAULT -> {
+    //     if (defaultCensoredCountryCodes.contains(countryCode)) {
+    //       censorshipConfiguration[countryCode] ?: defaultCensoredConfiguration
+    //     } else {
+    //       uncensoredConfiguration
+    //     }
+    //   }
+    // }
   }
 
   fun isCensored(): Boolean {
@@ -322,12 +323,10 @@ class SignalServiceNetworkAccess(context: Context) {
       censored = true
     )
   }
+  
   override fun toString(): String {
     return "SignalServiceNetworkAccess(" +
       "DNS=$DNS, " +
-      "serviceTrustStore=$serviceTrustStore, " +
-      "gTrustStore=$gTrustStore, " +
-      "fTrustStore=$fTrustStore, " +
       "interceptors=$interceptors, " +
       "zkGroupServerPublicParams=${zkGroupServerPublicParams.contentToString()}, " +
       "genericServerPublicParams=${genericServerPublicParams.contentToString()}, " +
