@@ -322,6 +322,18 @@ class SignalServiceNetworkAccess(context: Context) {
       censored = true
     )
   }
-
+  override fun toString(): String {
+    return "SignalServiceNetworkAccess(" +
+      "DNS=$DNS, " +
+      "serviceTrustStore=$serviceTrustStore, " +
+      "gTrustStore=$gTrustStore, " +
+      "fTrustStore=$fTrustStore, " +
+      "interceptors=$interceptors, " +
+      "zkGroupServerPublicParams=${zkGroupServerPublicParams.contentToString()}, " +
+      "genericServerPublicParams=${genericServerPublicParams.contentToString()}, " +
+      "backupServerPublicParams=${backupServerPublicParams.contentToString()}, " +
+      "defaultCensoredCountryCodes=$defaultCensoredCountryCodes" +
+      ")"
+  }
   private data class HostConfig(val baseUrl: String, val host: String, val connectionSpec: ConnectionSpec)
 }

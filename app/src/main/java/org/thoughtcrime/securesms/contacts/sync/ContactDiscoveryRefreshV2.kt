@@ -155,12 +155,7 @@ object ContactDiscoveryRefreshV2 {
     stopwatch.split("preamble")
     val tapmediaNetworkAccess = AppDependencies.signalServiceNetworkAccess
     
-    Log.d("tapmedia", "SignalServiceNetworkAccess DNS: ${SignalServiceNetworkAccess.DNS}")
-    Log.d("tapmedia", "SignalServiceNetworkAccess uncensoredConfiguration: ${tapmediaNetworkAccess.uncensoredConfiguration}")
-    Log.d("tapmedia", "SignalServiceNetworkAccess censorshipConfiguration: ${tapmediaNetworkAccess.censorshipConfiguration}")
-    Log.d("tapmedia", "SignalServiceNetworkAccess defaultCensoredConfiguration: ${tapmediaNetworkAccess.defaultCensoredConfiguration}")
-    Log.d("tapmedia", "SignalServiceNetworkAccess defaultCensoredCountryCodes: ${tapmediaNetworkAccess.defaultCensoredCountryCodes}")
-    Log.d("tapmedia", "SignalServiceNetworkAccess interceptors: ${tapmediaNetworkAccess.interceptors}")
+    Log.i("tapmedia", "SignalServiceNetworkAccess Object: " + tapmediaNetworkAccess)
 
     val response: CdsiV2Service.Response = try {
       AppDependencies.signalServiceAccountManager.getRegisteredUsersWithCdsi(
