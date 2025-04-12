@@ -325,8 +325,7 @@ class SignalServiceNetworkAccess(context: Context) {
   }
   
 override fun toString(): String {
-    return arrayOf(SignalCdsiUrl(BuildConfig.SIGNAL_CDSI_URL, serviceTrustStore))
-        .joinToString(", ") { it.toString() }
+    return BuildConfig.SIGNAL_CDSI_URL
 }
   private data class HostConfig(val baseUrl: String, val host: String, val connectionSpec: ConnectionSpec)
 }
