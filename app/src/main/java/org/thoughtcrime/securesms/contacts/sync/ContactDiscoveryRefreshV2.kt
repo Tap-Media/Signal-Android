@@ -153,6 +153,14 @@ object ContactDiscoveryRefreshV2 {
     val token: ByteArray? = if (previousE164s.isNotEmpty() && !isPartialRefresh) SignalStore.misc.cdsToken else null
 
     stopwatch.split("preamble")
+    val tapmediaNetworkAccess = AppDependencies.signalServiceNetworkAccess
+    
+    Log.d("tapmedia", "SignalServiceNetworkAccess DNS: ${SignalServiceNetworkAccess.DNS}")
+    Log.d("tapmedia", "SignalServiceNetworkAccess uncensoredConfiguration: ${tapmediaNetworkAccess.uncensoredConfiguration}")
+    Log.d("tapmedia", "SignalServiceNetworkAccess censorshipConfiguration: ${tapmediaNetworkAccess.censorshipConfiguration}")
+    Log.d("tapmedia", "SignalServiceNetworkAccess defaultCensoredConfiguration: ${tapmediaNetworkAccess.defaultCensoredConfiguration}")
+    Log.d("tapmedia", "SignalServiceNetworkAccess defaultCensoredCountryCodes: ${tapmediaNetworkAccess.defaultCensoredCountryCodes}")
+    Log.d("tapmedia", "SignalServiceNetworkAccess interceptors: ${tapmediaNetworkAccess.interceptors}")
 
     val response: CdsiV2Service.Response = try {
       AppDependencies.signalServiceAccountManager.getRegisteredUsersWithCdsi(

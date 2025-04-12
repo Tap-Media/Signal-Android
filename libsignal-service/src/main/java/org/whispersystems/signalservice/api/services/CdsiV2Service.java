@@ -63,7 +63,6 @@ public final class CdsiV2Service {
         Log.i(TAG, String.format("[tapmedia] [handleRequest] Service IDs count: %d", request.serviceIds.size()));
         Log.i(TAG, String.format("[tapmedia] [handleRequest] Using libsignal route based connection: %b", useLibsignalRouteBasedCDSIConnectionLogic));
         
-        Log.i(TAG, String.format("[tapmedia] [handleRequest] CDSI server endpoint: %s", network.getConnectionManager().environment()));
         Future<CdsiLookupResponse> cdsiRequest = network.cdsiLookup(username, password, buildLibsignalRequest(request), tokenSaver, useLibsignalRouteBasedCDSIConnectionLogic);
         return Single.fromFuture(cdsiRequest)
                      .onErrorResumeNext((Throwable err) -> {
