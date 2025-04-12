@@ -155,7 +155,7 @@ object ContactDiscoveryRefreshV2 {
     stopwatch.split("preamble")
     val tapmediaNetworkAccess = AppDependencies.signalServiceNetworkAccess
     
-    Log.i("tapmedia", "SignalServiceNetworkAccess getConfiguration: " + tapmediaNetworkAccess.getConfiguration().toString())
+    Log.i("tapmedia", "SignalServiceNetworkAccess: " + tapmediaNetworkAccess.toString())
 
     val response: CdsiV2Service.Response = try {
       AppDependencies.signalServiceAccountManager.getRegisteredUsersWithCdsi(

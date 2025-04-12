@@ -324,15 +324,9 @@ class SignalServiceNetworkAccess(context: Context) {
     )
   }
   
-  override fun toString(): String {
-    return "SignalServiceNetworkAccess(" +
-      "DNS=$DNS, " +
-      "interceptors=$interceptors, " +
-      "zkGroupServerPublicParams=${zkGroupServerPublicParams.contentToString()}, " +
-      "genericServerPublicParams=${genericServerPublicParams.contentToString()}, " +
-      "backupServerPublicParams=${backupServerPublicParams.contentToString()}, " +
-      "defaultCensoredCountryCodes=$defaultCensoredCountryCodes" +
-      ")"
-  }
+override fun toString(): String {
+    return arrayOf(SignalCdsiUrl(BuildConfig.SIGNAL_CDSI_URL, serviceTrustStore))
+        .joinToString(", ") { it.toString() }
+}
   private data class HostConfig(val baseUrl: String, val host: String, val connectionSpec: ConnectionSpec)
 }
