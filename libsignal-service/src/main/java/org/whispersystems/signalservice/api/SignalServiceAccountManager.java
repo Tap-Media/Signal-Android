@@ -228,7 +228,9 @@ public class SignalServiceAccountManager {
   {
     Log.d(TAG, "[getRegisteredUsersWithCdsi] Starting CDSI request");
     CdsiAuthResponse auth = pushServiceSocket.getCdsiAuth();
-    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Got CDSI auth credentials: username=%s", auth.getUsername()));
+    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Got CDSI auth credentials: username=%s, password length=%d", 
+        auth.getUsername(), auth.getPassword() != null ? auth.getPassword().length() : 0));
+    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Auth token expiration: %s", auth.getExpiration()));
     
     CdsiV2Service service = new CdsiV2Service(libsignalNetwork, useLibsignalRouteBasedCDSIConnectionLogic);
     CdsiV2Service.Request request = new CdsiV2Service.Request(previousE164s, newE164s, serviceIds, token);
