@@ -54,7 +54,7 @@ import okhttp3.WebSocketListener;
  */
 final class CdsiSocket {
 
-  private static final String TAG = CdsiSocket.class.getSimpleName();
+  private static final String TAG = "SignalCDSI";
 
   private final SignalCdsiUrl cdsiUrl;
   private final OkHttpClient  okhttp;
@@ -66,13 +66,13 @@ final class CdsiSocket {
     this.cdsiUrl   = chooseUrl(configuration.getSignalCdsiUrls());
     this.mrEnclave = mrEnclave;
 
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Creating socket with CDSI URL: %s", cdsiUrl.getUrl()));
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Using mrEnclave: %s", mrEnclave));
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave length: %d", mrEnclave.length()));
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave format: %s", mrEnclave.matches("[0-9a-fA-F]+") ? "hex" : "non-hex"));
+    Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Creating socket with CDSI URL: %s", cdsiUrl.getUrl()));
+    Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Using mrEnclave: %s", mrEnclave));
+    Log.i(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave length: %d", mrEnclave.length()));
+    Log.i(TAG, String.format("[tapmedia] [CdsiSocket] mrEnclave format: %s", mrEnclave.matches("[0-9a-fA-F]+") ? "hex" : "non-hex"));
     
     Pair<SSLSocketFactory, X509TrustManager> socketFactory = createTlsSocketFactory(cdsiUrl.getTrustStore());
-    Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Created socket factory with trust store: %s", cdsiUrl.getTrustStore()));
+    Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Created socket factory with trust store: %s", cdsiUrl.getTrustStore()));
 
     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                                                    .sslSocketFactory(new Tls12SocketFactory(socketFactory.first()), socketFactory.second())
@@ -82,11 +82,11 @@ final class CdsiSocket {
                                                    .connectTimeout(30, TimeUnit.SECONDS)
                                                    .addInterceptor(chain -> {
                                                      Request request = chain.request();
-                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Making request to %s", request.url()));
-                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Request headers: %s", request.headers()));
+                                                     Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Making request to %s", request.url()));
+                                                     Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Request headers: %s", request.headers()));
                                                      Response response = chain.proceed(request);
-                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Response code: %d", response.code()));
-                                                     Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Response headers: %s", response.headers()));
+                                                     Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Response code: %d", response.code()));
+                                                     Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Response headers: %s", response.headers()));
                                                      return response;
                                                    });
 
@@ -96,12 +96,12 @@ final class CdsiSocket {
 
     if (configuration.getSignalProxy().isPresent()) {
       SignalProxy proxy = configuration.getSignalProxy().get();
-      Log.d(TAG, String.format("[tapmedia] [CdsiSocket] Using proxy: %s:%d", proxy.getHost(), proxy.getPort()));
+      Log.i(TAG, String.format("[tapmedia] [CdsiSocket] Using proxy: %s:%d", proxy.getHost(), proxy.getPort()));
       builder.socketFactory(new TlsProxySocketFactory(proxy.getHost(), proxy.getPort(), configuration.getDns()));
     }
 
     this.okhttp = builder.build();
-    Log.d(TAG, "[tapmedia] [CdsiSocket] OkHttpClient built successfully");
+    Log.i(TAG, "[tapmedia] [CdsiSocket] OkHttpClient built successfully");
   }
 
   Observable<ClientResponse> connect(String username, String password, ClientRequest clientRequest, Consumer<byte[]> tokenSaver) {
@@ -109,11 +109,11 @@ final class CdsiSocket {
       AtomicReference<Stage> stage = new AtomicReference<>(Stage.WAITING_TO_INITIALIZE);
 
       String          url     = String.format("%s/v1/%s/discovery", cdsiUrl.getUrl(), mrEnclave);
-      Log.d(TAG, String.format("[tapmedia] [connect] Attempting WebSocket connection to %s", url));
-      Log.d(TAG, String.format("[tapmedia] [connect] Using mrEnclave in URL: %s", mrEnclave));
+      Log.i(TAG, String.format("[tapmedia] [connect] Attempting WebSocket connection to %s", url));
+      Log.i(TAG, String.format("[tapmedia] [connect] Using mrEnclave in URL: %s", mrEnclave));
       
       String authHeader = basicAuth(username, password);
-      Log.d(TAG, String.format("[tapmedia] [connect] Using auth header: %s", authHeader));
+      Log.i(TAG, String.format("[tapmedia] [connect] Using auth header: %s", authHeader));
       
       Request.Builder request = new Request.Builder()
                                    .url(url)
@@ -125,11 +125,11 @@ final class CdsiSocket {
 
       if (cdsiUrl.getHostHeader().isPresent()) {
         String hostHeader = cdsiUrl.getHostHeader().get();
-        Log.d(TAG, String.format("[tapmedia] [connect] Using host header: %s", hostHeader));
+        Log.i(TAG, String.format("[tapmedia] [connect] Using host header: %s", hostHeader));
         request.addHeader("Host", hostHeader);
       }
 
-      Log.d(TAG, String.format("[tapmedia] [connect] Full request headers: %s", request.build().headers()));
+      Log.i(TAG, String.format("[tapmedia] [connect] Full request headers: %s", request.build().headers()));
 
       WebSocket webSocket = okhttp.newWebSocket(request.build(), new WebSocketListener() {
         @Override
