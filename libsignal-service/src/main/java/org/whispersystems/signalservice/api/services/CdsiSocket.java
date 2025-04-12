@@ -91,6 +91,8 @@ final class CdsiSocket {
       AtomicReference<Stage> stage = new AtomicReference<>(Stage.WAITING_TO_INITIALIZE);
 
       String          url     = String.format("%s/v1/%s/discovery", cdsiUrl.getUrl(), mrEnclave);
+      Log.d(TAG, String.format("[tapmedia] [connect] Attempting WebSocket connection to %s", url));
+      
       Request.Builder request = new Request.Builder()
                                    .url(url)
                                    .addHeader("Authorization", basicAuth(username, password));
@@ -102,13 +104,13 @@ final class CdsiSocket {
       WebSocket webSocket = okhttp.newWebSocket(request.build(), new WebSocketListener() {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-          Log.d(TAG, "[onOpen]");
+          Log.d(TAG, String.format("[tapmedia] [onOpen] WebSocket opened with response code: %d", response.code()));
           stage.set(Stage.WAITING_FOR_CONNECTION);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, okio.ByteString bytes) {
-          Log.d(TAG, "[onMessage] stage: " + stage.get());
+          Log.d(TAG, String.format("[tapmedia] [onMessage] stage: %s", stage.get()));
 
           try {
             switch (stage.get()) {
@@ -118,19 +120,19 @@ final class CdsiSocket {
               case WAITING_FOR_CONNECTION:
                 client = new Cds2Client(Hex.fromStringCondensed(mrEnclave), bytes.toByteArray(), Instant.now());
 
-                Log.d(TAG, "[onMessage] Sending initial handshake...");
+                Log.d(TAG, "[tapmedia] [onMessage] Sending initial handshake...");
                 webSocket.send(okio.ByteString.of(client.initialRequest()));
                 stage.set(Stage.WAITING_FOR_HANDSHAKE);
                 break;
 
               case WAITING_FOR_HANDSHAKE:
                 client.completeHandshake(bytes.toByteArray());
-                Log.d(TAG, "[onMessage] Handshake read success.");
+                Log.d(TAG, "[tapmedia] [onMessage] Handshake read success.");
 
-                Log.d(TAG, "[onMessage] Sending data...");
+                Log.d(TAG, "[tapmedia] [onMessage] Sending data...");
                 byte[] ciphertextBytes = client.establishedSend(clientRequest.encode());
                 webSocket.send(okio.ByteString.of(ciphertextBytes));
-                Log.d(TAG, "[onMessage] Data sent.");
+                Log.d(TAG, "[tapmedia] [onMessage] Data sent.");
 
                 stage.set(Stage.WAITING_FOR_TOKEN);
                 break;
@@ -144,7 +146,7 @@ final class CdsiSocket {
 
                 tokenSaver.accept(tokenResponse.token.toByteArray());
 
-                Log.d(TAG, "[onMessage] Sending token ack...");
+                Log.d(TAG, "[tapmedia] [onMessage] Sending token ack...");
                 webSocket.send(okio.ByteString.of(client.establishedSend(new ClientRequest.Builder()
                                                                                           .tokenAck(true)
                                                                                           .build()
@@ -157,16 +159,16 @@ final class CdsiSocket {
                 break;
 
               case CLOSED:
-                Log.w(TAG, "[onMessage] Received a message after the websocket closed! Ignoring.");
+                Log.w(TAG, "[tapmedia] [onMessage] Received a message after the websocket closed! Ignoring.");
                 break;
 
               case FAILED:
-                Log.w(TAG, "[onMessage] Received a message after we entered the failure state! Ignoring.");
+                Log.w(TAG, "[tapmedia] [onMessage] Received a message after we entered the failure state! Ignoring.");
                 webSocket.close(1000, "OK");
                 break;
             }
           } catch (IOException | AttestationDataException | AttestationFailedException | SgxCommunicationFailureException e) {
-            Log.w(TAG, e);
+            Log.w(TAG, String.format("[tapmedia] [onMessage] Error: %s", e.getMessage()), e);
             webSocket.close(1000, "OK");
             emitter.tryOnError(e);
           }
@@ -174,12 +176,12 @@ final class CdsiSocket {
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-          Log.i(TAG, "[onClosing] code: " + code + ", reason: " + reason);
+          Log.i(TAG, String.format("[tapmedia] [onClosing] code: %d, reason: %s", code, reason));
           if (code == 1000) {
             emitter.onComplete();
             stage.set(Stage.CLOSED);
           } else {
-            Log.w(TAG, "Remote side is closing with non-normal code " + code);
+            Log.w(TAG, String.format("[tapmedia] Remote side is closing with non-normal code %d", code));
             webSocket.close(1000, "Remote closed with code " + code);
             stage.set(Stage.FAILED);
             if (code == 4003) {
@@ -189,7 +191,7 @@ final class CdsiSocket {
                 CdsiResourceExhaustedResponse response = JsonUtil.fromJsonResponse(reason, CdsiResourceExhaustedResponse.class);
                 emitter.tryOnError(new CdsiResourceExhaustedException(response.getRetryAfter()));
               } catch (IOException e) {
-                Log.w(TAG, "Failed to parse the retry_after!");
+                Log.w(TAG, "[tapmedia] Failed to parse the retry_after!");
                 emitter.tryOnError(new NonSuccessfulResponseCodeException(code));
               }
             } else if (code == 4101) {
@@ -202,7 +204,9 @@ final class CdsiSocket {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-          Log.w(TAG, "[onFailure] response? " + (response != null), t);
+          Log.e(TAG, String.format("[tapmedia] [onFailure] WebSocket failed. Response: %s, Error: %s", 
+              response != null ? response.toString() : "null", 
+              t.getMessage()), t);
           emitter.tryOnError(t);
           stage.set(Stage.FAILED);
           webSocket.close(1000, "OK");

@@ -40,6 +40,7 @@ import javax.annotation.Nonnull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import okio.ByteString;
+import android.util.Log;
 
 /**
  * Handles network interactions with CDSI, the SGX-backed version of the CDSv2 API.
@@ -56,9 +57,11 @@ public final class CdsiV2Service {
   public CdsiV2Service(@Nonnull Network network, boolean useLibsignalRouteBasedCDSIConnectionLogic) {
     this.cdsiRequestHandler = (username, password, request, tokenSaver) -> {
       try {
+        Log.d(TAG, "[tapmedia] [handleRequest] Starting CDSI lookup request");
         Future<CdsiLookupResponse> cdsiRequest = network.cdsiLookup(username, password, buildLibsignalRequest(request), tokenSaver, useLibsignalRouteBasedCDSIConnectionLogic);
         return Single.fromFuture(cdsiRequest)
                      .onErrorResumeNext((Throwable err) -> {
+                       Log.e(TAG, String.format("[tapmedia] [handleRequest] CDSI lookup failed: %s", err.getMessage()), err);
                        if (err instanceof ExecutionException && err.getCause() != null) {
                          err = err.getCause();
                        }
@@ -67,6 +70,7 @@ public final class CdsiV2Service {
                      .map(CdsiV2Service::parseLibsignalResponse)
                      .toObservable();
       } catch (Exception exception) {
+        Log.e(TAG, String.format("[tapmedia] [handleRequest] Unexpected error in CDSI lookup: %s", exception.getMessage()), exception);
         return Observable.error(mapLibsignalError(exception));
       }
     };

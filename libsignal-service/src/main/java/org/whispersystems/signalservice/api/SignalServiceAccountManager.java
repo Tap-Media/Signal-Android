@@ -79,6 +79,7 @@ import javax.annotation.Nonnull;
 
 import io.reactivex.rxjava3.core.Single;
 import okio.ByteString;
+import android.util.Log;
 
 /**
  * The main interface for creating, registering, and
@@ -225,22 +226,24 @@ public class SignalServiceAccountManager {
                                                            Consumer<byte[]> tokenSaver)
       throws IOException
   {
-    CdsiAuthResponse                                auth    = pushServiceSocket.getCdsiAuth();
-    CdsiV2Service                                   service = new CdsiV2Service(libsignalNetwork, useLibsignalRouteBasedCDSIConnectionLogic);
-    CdsiV2Service.Request                           request = new CdsiV2Service.Request(previousE164s, newE164s, serviceIds, token);
-    Single<ServiceResponse<CdsiV2Service.Response>> single  = service.getRegisteredUsers(auth.getUsername(), auth.getPassword(), request, tokenSaver);
+    Log.d(TAG, "[getRegisteredUsersWithCdsi] Starting CDSI request");
+    CdsiAuthResponse auth = pushServiceSocket.getCdsiAuth();
+    Log.d(TAG, String.format("[getRegisteredUsersWithCdsi] Got CDSI auth credentials: username=%s", auth.getUsername()));
+    
+    CdsiV2Service service = new CdsiV2Service(libsignalNetwork, useLibsignalRouteBasedCDSIConnectionLogic);
+    CdsiV2Service.Request request = new CdsiV2Service.Request(previousE164s, newE164s, serviceIds, token);
+    Single<ServiceResponse<CdsiV2Service.Response>> single = service.getRegisteredUsers(auth.getUsername(), auth.getPassword(), request, tokenSaver);
 
     ServiceResponse<CdsiV2Service.Response> serviceResponse;
     try {
+      Log.d(TAG, "[getRegisteredUsersWithCdsi] Making CDSI request with timeout: " + (timeoutMs != null ? timeoutMs : "none"));
       if (timeoutMs == null) {
-        serviceResponse = single
-            .blockingGet();
+        serviceResponse = single.blockingGet();
       } else {
-        serviceResponse = single
-            .timeout(timeoutMs, TimeUnit.MILLISECONDS)
-            .blockingGet();
+        serviceResponse = single.timeout(timeoutMs, TimeUnit.MILLISECONDS).blockingGet();
       }
     } catch (RuntimeException e) {
+      Log.e(TAG, String.format("[getRegisteredUsersWithCdsi] Runtime error: %s", e.getMessage()), e);
       Throwable cause = e.getCause();
       if (cause instanceof InterruptedException) {
         throw new IOException("Interrupted", cause);
@@ -250,6 +253,7 @@ public class SignalServiceAccountManager {
         throw e;
       }
     } catch (Exception e) {
+      Log.e(TAG, String.format("[getRegisteredUsersWithCdsi] Unexpected error: %s", e.getMessage()), e);
       throw new RuntimeException("Unexpected exception when retrieving registered users!", e);
     }
 
