@@ -225,7 +225,12 @@ final class CdsiSocket {
           if (response != null) {
             Log.e(TAG, String.format("[tapmedia] [onFailure] Response headers: %s", response.headers().toString()));
             Log.e(TAG, String.format("[tapmedia] [onFailure] Response message: %s", response.message()));
-            Log.e(TAG, String.format("[tapmedia] [onFailure] Response body: %s", response.body() != null ? response.body().string() : "null"));
+            try {
+              Log.e(TAG, String.format("[tapmedia] [onFailure] Response body: %s", 
+                  response.body() != null ? response.body().string() : "null"));
+            } catch (IOException e) {
+              Log.e(TAG, "[tapmedia] [onFailure] Failed to read response body", e);
+            }
           }
           emitter.tryOnError(t);
           stage.set(Stage.FAILED);
