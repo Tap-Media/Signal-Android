@@ -93,18 +93,33 @@ final class CdsiSocket {
       String          url     = String.format("%s/v1/%s/discovery", cdsiUrl.getUrl(), mrEnclave);
       Log.d(TAG, String.format("[tapmedia] [connect] Attempting WebSocket connection to %s", url));
       
+      String authHeader = basicAuth(username, password);
+      Log.d(TAG, String.format("[tapmedia] [connect] Using auth header: %s", authHeader));
+      
       Request.Builder request = new Request.Builder()
                                    .url(url)
-                                   .addHeader("Authorization", basicAuth(username, password));
+                                   .addHeader("Authorization", authHeader)
+                                   .addHeader("Upgrade", "websocket")
+                                   .addHeader("Connection", "Upgrade")
+                                   .addHeader("Sec-WebSocket-Version", "13")
+                                   .addHeader("Sec-WebSocket-Key", Base64.encodeWithPadding(Util.getSecretBytes(16)));
 
       if (cdsiUrl.getHostHeader().isPresent()) {
-        request.addHeader("Host", cdsiUrl.getHostHeader().get());
+        String hostHeader = cdsiUrl.getHostHeader().get();
+        request.addHeader("Host", hostHeader);
+        Log.d(TAG, String.format("[tapmedia] [connect] Using host header: %s", hostHeader));
       }
 
-      WebSocket webSocket = okhttp.newWebSocket(request.build(), new WebSocketListener() {
+      Request builtRequest = request.build();
+      Log.d(TAG, String.format("[tapmedia] [connect] WebSocket upgrade request: %s", builtRequest.toString()));
+      Log.d(TAG, String.format("[tapmedia] [connect] WebSocket request headers: %s", builtRequest.headers().toString()));
+
+      WebSocket webSocket = okhttp.newWebSocket(builtRequest, new WebSocketListener() {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
           Log.d(TAG, String.format("[tapmedia] [onOpen] WebSocket opened with response code: %d", response.code()));
+          Log.d(TAG, String.format("[tapmedia] [onOpen] Response headers: %s", response.headers().toString()));
+          Log.d(TAG, String.format("[tapmedia] [onOpen] Response message: %s", response.message()));
           stage.set(Stage.WAITING_FOR_CONNECTION);
         }
 
@@ -207,6 +222,11 @@ final class CdsiSocket {
           Log.e(TAG, String.format("[tapmedia] [onFailure] WebSocket failed. Response: %s, Error: %s", 
               response != null ? response.toString() : "null", 
               t.getMessage()), t);
+          if (response != null) {
+            Log.e(TAG, String.format("[tapmedia] [onFailure] Response headers: %s", response.headers().toString()));
+            Log.e(TAG, String.format("[tapmedia] [onFailure] Response message: %s", response.message()));
+            Log.e(TAG, String.format("[tapmedia] [onFailure] Response body: %s", response.body() != null ? response.body().string() : "null"));
+          }
           emitter.tryOnError(t);
           stage.set(Stage.FAILED);
           webSocket.close(1000, "OK");
